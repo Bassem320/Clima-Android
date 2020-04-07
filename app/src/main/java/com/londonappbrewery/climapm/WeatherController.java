@@ -14,6 +14,16 @@ import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class WeatherController extends AppCompatActivity {
@@ -84,6 +94,12 @@ public class WeatherController extends AppCompatActivity {
                 String longitude = String.valueOf(location.getLongitude());
                 String latitude = String.valueOf(location.getLatitude());
                 Log.d("Clima","Longitude: "+ longitude + ", Latitude: "+latitude);
+
+                RequestParams params = new RequestParams();
+                params.put("lat",latitude);
+                params.put("lon",longitude);
+                params.put("appid",APP_ID);
+                letsDoSomeNetworking(params);
             }
 
             @Override
@@ -132,8 +148,20 @@ public class WeatherController extends AppCompatActivity {
 
 
     // TODO: Add letsDoSomeNetworking(RequestParams params) here:
+    void letsDoSomeNetworking(RequestParams params){
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(WEATHER_URL,params,new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("Clima","Success JASON: "+ response.toString());
+            }
 
-
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.d("Clima","Request Failed");
+            }
+        });
+    }
 
     // TODO: Add updateUI() here:
 
